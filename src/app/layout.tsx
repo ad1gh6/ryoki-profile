@@ -68,9 +68,17 @@ export default function RootLayout({
 
   useEffect(() => {
     if (audioRef.current && audioRef.current.readyState >= 2 && !bgmFadedOut) {
-      audioRef.current.volume = isMuted ? 0 : volume;
+      if (isMuted) {
+        audioRef.current.volume = 0;
+        audioRef.current.pause(); // スマホ（iOS等）でも確実に消音
+      } else {
+        audioRef.current.volume = volume;
+        if (showMain) {
+          audioRef.current.play().catch(() => {});
+        }
+      }
     }
-  }, [volume, isMuted, bgmFadedOut]);
+  }, [volume, isMuted, bgmFadedOut, showMain]);
 
   return (
     <html lang="ja">

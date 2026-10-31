@@ -19,6 +19,14 @@ export default function Playlist() {
     setMounted(true);
   }, []);
 
+  // Spotifyエリアにタッチ・クリックしたときに即座にBGMを停止
+  const handleSpotifyAreaInteract = () => {
+    if (!spotifyPlaying) {
+      setSpotifyPlaying(true);
+      fadeBgm(true);
+    }
+  };
+
   // Spotify iframe がクリックされた（フォーカスされた）かを検出
   useEffect(() => {
     const handleWindowBlur = () => {
@@ -83,7 +91,7 @@ export default function Playlist() {
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg>
               )}
             </button>
-            <input type="range" min={0} max={1} step={0.01} value={volume} onChange={(e) => setVolume(parseFloat(e.target.value))} className="w-14 sm:w-16 h-1 bg-zinc-700 rounded-lg appearance-none accent-emerald-500" />
+            <input type="range" min={0} max={1} step={0.01} value={volume} onChange={(e) => setVolume(parseFloat(e.target.value))} className="hidden sm:block w-16 h-1 bg-zinc-700 rounded-lg appearance-none accent-emerald-500" />
           </div>
         )}
       </div>
@@ -102,23 +110,34 @@ export default function Playlist() {
           </h1>
         </div>
 
-        {/* BGMに戻すボタン（Spotify再生中のみ表示） */}
-        {spotifyPlaying && (
-          <div className="flex justify-center">
+        {/* BGMとSpotifyの切り替えボタン */}
+        <div className="flex justify-center">
+          {spotifyPlaying ? (
             <button
               onClick={handleResumeBgm}
-              className={`inline-flex items-center gap-2 bg-purple-600/10 hover:bg-purple-600 border border-purple-500/30 hover:border-purple-500 text-purple-400 hover:text-white font-bold py-2 px-5 rounded-full text-[11px] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_15px_rgba(147,51,234,0.4)] ${dotGothic.className}`}
+              className={`inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 px-5 rounded-full text-xs transition-all duration-300 hover:scale-105 shadow-[0_0_15px_rgba(147,51,234,0.4)] ${dotGothic.className}`}
             >
-              🎵 BGM に戻す
+              🎵 背景BGM を再開する
             </button>
-          </div>
-        )}
+          ) : (
+            <button
+              onClick={handleSpotifyAreaInteract}
+              className={`inline-flex items-center gap-2 bg-zinc-900/80 hover:bg-zinc-800 border border-emerald-500/40 text-emerald-400 font-bold py-2 px-5 rounded-full text-xs transition-all duration-300 hover:scale-105 ${dotGothic.className}`}
+            >
+              🔇 背景BGM を一時停止してSpotifyを聴く
+            </button>
+          )}
+        </div>
 
         {/* Spotify Embed */}
         <div className={`text-center text-amber-400 text-[11px] tracking-widest flex items-center justify-center gap-1.5 ${dotGothic.className}`}>
           ⚠️ 音量注意
         </div>
-        <div className="bg-zinc-900/60 backdrop-blur-md border border-emerald-500/20 hover:border-emerald-500/40 rounded-2xl shadow-xl overflow-hidden transition-all duration-500 hover:shadow-[0_0_30px_rgba(16,185,129,0.15)]">
+        <div 
+          onClick={handleSpotifyAreaInteract}
+          onTouchStart={handleSpotifyAreaInteract}
+          className="bg-zinc-900/60 backdrop-blur-md border border-emerald-500/20 hover:border-emerald-500/40 rounded-2xl shadow-xl overflow-hidden transition-all duration-500 hover:shadow-[0_0_30px_rgba(16,185,129,0.15)]"
+        >
           <iframe
             key={iframeKey}
             src="https://open.spotify.com/embed/playlist/1hWrN2nr4RiEHKC0qxvwKl?utm_source=generator&theme=0"
