@@ -20,6 +20,8 @@ const AppContext = createContext<{
   setIsAnimating: (a: boolean) => void;
   audioRef: React.RefObject<HTMLAudioElement | null>;
   fadeBgm: (fadeOut: boolean) => void;
+  pauseBgm: () => void;
+  resumeBgm: () => void;
 } | null>(null);
 
 export const useApp = () => {
@@ -41,29 +43,56 @@ export default function RootLayout({
   const fadeIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const [bgmFadedOut, setBgmFadedOut] = useState(false);
 
+  // スマホでも100%確実に止める直接停止・再開関数
+  const pauseBgm = useCallback(() => {
+    if (fadeIntervalRef.current) clearInterval(fadeIntervalRef.current);
+    setBgmFadedOut(true);
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+  }, []);
+
+  const resumeBgm = useCallback(() => {
+    if (fadeIntervalRef.current) clearInterval(fadeIntervalRef.current);
+    setBgmFadedOut(false);
+    if (audioRef.current && !isMuted) {
+      audioRef.current.volume = volume;
+      audioRef.current.play().catch(() => {});
+    }
+  }, [volume, isMuted]);
+
   // BGMをスムーズにフェードイン/アウトする関数
   const fadeBgm = useCallback((fadeOut: boolean) => {
     if (!audioRef.current) return;
     if (fadeIntervalRef.current) clearInterval(fadeIntervalRef.current);
     setBgmFadedOut(fadeOut);
 
-    const targetVol = fadeOut ? 0 : (isMuted ? 0 : volume);
-    const step = 0.01;
-    const intervalMs = 30;
-
-    fadeIntervalRef.current = setInterval(() => {
-      if (!audioRef.current) return;
-      const current = audioRef.current.volume;
-      if (fadeOut) {
+    if (fadeOut) {
+      // スマホ対策：直接pauseも呼ぶ
+      const targetVol = 0;
+      const step = 0.02;
+      fadeIntervalRef.current = setInterval(() => {
+        if (!audioRef.current) return;
+        const current = audioRef.current.volume;
         const next = Math.max(0, current - step);
         audioRef.current.volume = next;
-        if (next <= 0) clearInterval(fadeIntervalRef.current!);
-      } else {
+        if (next <= 0) {
+          clearInterval(fadeIntervalRef.current!);
+          audioRef.current.pause(); // 確実に停止
+        }
+      }, 30);
+    } else {
+      const targetVol = isMuted ? 0 : volume;
+      audioRef.current.play().catch(() => {});
+      const step = 0.02;
+      fadeIntervalRef.current = setInterval(() => {
+        if (!audioRef.current) return;
+        const current = audioRef.current.volume;
         const next = Math.min(targetVol, current + step);
         audioRef.current.volume = next;
         if (next >= targetVol) clearInterval(fadeIntervalRef.current!);
-      }
-    }, intervalMs);
+      }, 30);
+    }
   }, [volume, isMuted]);
 
   useEffect(() => {
@@ -86,7 +115,7 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
       </head>
       <body className="antialiased bg-black text-white">
-        <AppContext.Provider value={{ volume, setVolume, isMuted, setIsMuted, showMain, setShowMain, isAnimating, setIsAnimating, audioRef, fadeBgm }}>
+        <AppContext.Provider value={{ volume, setVolume, isMuted, setIsMuted, showMain, setShowMain, isAnimating, setIsAnimating, audioRef, fadeBgm, pauseBgm, resumeBgm }}>
           <audio ref={audioRef} src="/bgm.m4a" loop />
           {children}
         </AppContext.Provider>

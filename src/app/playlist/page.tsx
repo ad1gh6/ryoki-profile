@@ -8,7 +8,7 @@ import { DotGothic16 } from "next/font/google";
 const dotGothic = DotGothic16({ weight: "400", subsets: ["latin"] });
 
 export default function Playlist() {
-  const { volume, setVolume, isMuted, setIsMuted, fadeBgm } = useApp();
+  const { volume, setVolume, isMuted, setIsMuted, fadeBgm, pauseBgm, resumeBgm } = useApp();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
@@ -19,35 +19,31 @@ export default function Playlist() {
     setMounted(true);
   }, []);
 
-  // Spotifyエリアにタッチ・クリックしたときに即座にBGMを停止
+  // Spotifyエリアにタッチ・クリックしたとき、またはボタンを押したときに即座にBGMを停止
   const handleSpotifyAreaInteract = () => {
-    if (!spotifyPlaying) {
-      setSpotifyPlaying(true);
-      fadeBgm(true);
-    }
+    setSpotifyPlaying(true);
+    pauseBgm(); // スマホでも確実に一時停止
   };
 
   // Spotify iframe がクリックされた（フォーカスされた）かを検出
   useEffect(() => {
     const handleWindowBlur = () => {
-      if (!spotifyPlaying) {
-        setSpotifyPlaying(true);
-        fadeBgm(true);
-      }
+      setSpotifyPlaying(true);
+      pauseBgm();
     };
 
     window.addEventListener('blur', handleWindowBlur);
     return () => {
       window.removeEventListener('blur', handleWindowBlur);
     };
-  }, [spotifyPlaying, fadeBgm]);
+  }, [pauseBgm]);
 
   // BGMに戻す & Spotifyを停止
   const handleResumeBgm = useCallback(() => {
     setSpotifyPlaying(false);
     setIframeKey(prev => prev + 1); // iframeをリロードしてSpotifyを停止
-    fadeBgm(false);
-  }, [fadeBgm]);
+    resumeBgm(); // BGM再開
+  }, [resumeBgm]);
 
   // ページ離脱時
   const handleBack = (e: React.MouseEvent) => {
