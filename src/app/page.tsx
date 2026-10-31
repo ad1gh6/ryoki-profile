@@ -167,22 +167,10 @@ const FAVORITE_GAMES = [
     iconUrl: 'https://cdn.simpleicons.org/valorant/ff4646'
   },
   {
-    name: 'R.E.P.O.',
-    color: 'from-amber-600/10 to-yellow-500/10 hover:from-amber-600 hover:to-yellow-500 border-amber-500/30 hover:border-amber-400 hover:text-white',
-    glow: 'hover:shadow-[0_0_15px_rgba(245,158,11,0.4)]',
-    iconUrl: ''
-  },
-  {
     name: 'Minecraft',
     color: 'from-emerald-600/10 to-green-500/10 hover:from-emerald-600 hover:to-green-500 border-green-500/30 hover:border-green-400 hover:text-white',
     glow: 'hover:shadow-[0_0_15px_rgba(34,197,94,0.4)]',
     iconUrl: 'https://cdn.simpleicons.org/minecraft/00b4ff'
-  },
-  {
-    name: 'Roblox',
-    color: 'from-zinc-600/10 to-stone-500/10 hover:from-zinc-600 hover:to-stone-500 border-stone-500/30 hover:border-stone-400 hover:text-white',
-    glow: 'hover:shadow-[0_0_15px_rgba(120,113,108,0.4)]',
-    iconUrl: ''
   }
 ];
   return (
