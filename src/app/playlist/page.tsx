@@ -136,7 +136,7 @@ export default function Playlist() {
         >
           <iframe
             key={iframeKey}
-            src="https://open.spotify.com/embed/playlist/1hWrN2nr4RiEHKC0qxvwKl?utm_source=generator&theme=0"
+            src="https://open.spotify.com/embed/playlist/0lxZMQGudNqoe09tLlPocI?utm_source=generator&theme=0"
             width="100%"
             height="352"
             frameBorder="0"
@@ -150,7 +150,7 @@ export default function Playlist() {
         {/* Spotifyで開くボタン */}
         <div className="flex justify-center">
           <a
-            href="https://open.spotify.com/playlist/1hWrN2nr4RiEHKC0qxvwKl"
+            href="https://open.spotify.com/playlist/0lxZMQGudNqoe09tLlPocI"
             target="_blank"
             rel="noopener noreferrer"
             className={`inline-flex items-center gap-2 bg-[#1DB954]/10 hover:bg-[#1DB954] border border-[#1DB954]/30 hover:border-[#1DB954] text-[#1DB954] hover:text-white font-bold py-3 px-8 rounded-full text-xs transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(29,185,84,0.4)] ${dotGothic.className}`}
