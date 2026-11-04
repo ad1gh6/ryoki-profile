@@ -13,8 +13,18 @@ export default function Girlfriend() {
   const [mounted, setMounted] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
   const [hearts, setHearts] = useState<{ id: number; left: number; delay: number; duration: number; size: number; opacity: number }[]>([]);
+  const [daysTogether, setDaysTogether] = useState<number>(1);
 
   useEffect(() => {
+    // 記念日: 2026年10月15日
+    const startDate = new Date(2026, 9, 15); // 月は0始まり（9 = 10月）
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    startDate.setHours(0, 0, 0, 0);
+    const diffTime = today.getTime() - startDate.getTime();
+    const diffDays = Math.max(1, Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1);
+    setDaysTogether(diffDays);
+
     setHearts(
       Array.from({ length: 20 }, (_, i) => ({
         id: i,
@@ -137,6 +147,23 @@ export default function Girlfriend() {
               <span className="inline-block border border-pink-500/50 text-pink-400 bg-pink-950/30 text-[10px] px-3 py-0.5 rounded-full font-mono font-semibold mt-2">
                 ♥ Girlfriend ♥
               </span>
+            </div>
+          </div>
+
+          {/* 💕 付き合って何日目カウンター */}
+          <div className="flex justify-center">
+            <div className={`flex flex-col items-center justify-center py-2.5 px-6 rounded-2xl bg-gradient-to-r from-pink-500/10 via-rose-500/15 to-pink-500/10 border border-pink-400/30 shadow-[0_0_15px_rgba(244,114,182,0.15)] ${dotGothic.className}`}>
+              <div className="flex items-center gap-1.5 text-[10px] text-pink-300/80 tracking-widest font-mono">
+                <span>SINCE</span>
+                <span className="font-bold text-pink-200">2026.10.15</span>
+              </div>
+              <div className="flex items-baseline gap-1.5 mt-0.5">
+                <span className="text-xs text-pink-300">付き合って</span>
+                <span className="text-2xl sm:text-3xl font-bold text-pink-200 tracking-wider filter drop-shadow-[0_0_8px_rgba(244,114,182,0.5)]">
+                  {daysTogether}
+                </span>
+                <span className="text-xs text-pink-300">日目 💕</span>
+              </div>
             </div>
           </div>
 
