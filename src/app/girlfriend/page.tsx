@@ -7,6 +7,18 @@ import { DotGothic16 } from "next/font/google";
 
 const dotGothic = DotGothic16({ weight: "400", subsets: ["latin"] });
 
+// 🎂 誕生日から年齢を自動計算する関数 (12月6日生まれ)
+function getAoiAge() {
+  const today = new Date();
+  let age = today.getFullYear() - 2011;
+  const m = today.getMonth() + 1;
+  const d = today.getDate();
+  if (m < 12 || (m === 12 && d < 6)) {
+    age--;
+  }
+  return age;
+}
+
 export default function Girlfriend() {
   const { volume, setVolume, isMuted, setIsMuted } = useApp();
   const router = useRouter();
@@ -14,8 +26,11 @@ export default function Girlfriend() {
   const [isLeaving, setIsLeaving] = useState(false);
   const [hearts, setHearts] = useState<{ id: number; left: number; delay: number; duration: number; size: number; opacity: number }[]>([]);
   const [daysTogether, setDaysTogether] = useState<number>(1);
+  const [aoiAge, setAoiAge] = useState<number>(14);
 
   useEffect(() => {
+    setAoiAge(getAoiAge());
+
     // 記念日: 2026年10月15日
     const startDate = new Date(2026, 9, 15); // 月は0始まり（9 = 10月）
     const today = new Date();
@@ -185,7 +200,7 @@ export default function Girlfriend() {
           {/* ステータスバッジ */}
           <div className={`flex flex-wrap gap-2 justify-center ${dotGothic.className}`}>
             <span className="bg-pink-950/40 border border-pink-500/30 px-3 py-1.5 rounded-xl text-xs text-pink-300 flex items-center gap-1.5 hover:border-pink-400/60 transition-colors duration-300">
-              14y/o
+              {aoiAge}y/o
             </span>
             <span className="bg-pink-950/40 border border-pink-500/30 px-3 py-1.5 rounded-xl text-xs text-pink-300 flex items-center gap-1.5 hover:border-pink-400/60 transition-colors duration-300">
               Japan

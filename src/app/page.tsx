@@ -38,11 +38,28 @@ interface LanyardData {
   spotify: SpotifyData | null;
 }
 
+// 🎂 誕生日から年齢を自動計算する関数 (5月5日生まれ)
+function getMyAge() {
+  const today = new Date();
+  let age = today.getFullYear() - 2010;
+  const m = today.getMonth() + 1;
+  const d = today.getDate();
+  if (m < 5 || (m === 5 && d < 5)) {
+    age--;
+  }
+  return age;
+}
+
 export default function Home() {
   const { volume, setVolume, isMuted, setIsMuted, showMain, setShowMain, audioRef } = useApp();
   const [isAnimating, setIsAnimating] = useState(false);
   const [isLeavingToHome, setIsLeavingToHome] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [myAge, setMyAge] = useState(16);
+
+  useEffect(() => {
+    setMyAge(getMyAge());
+  }, []);
 
   // --- Lanyard API から Discord のリアルタイムステータスを取得するロジック ---
   const [discordData, setDiscordData] = useState<LanyardData | null>(null);
@@ -238,7 +255,7 @@ const FAVORITE_GAMES = [
               <h1 className={`text-4xl sm:text-5xl md:text-6xl font-bold tracking-widest select-none mt-2 bg-gradient-to-r from-zinc-100 via-pink-100 to-purple-200 bg-clip-text text-transparent filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] drop-shadow-[0_4px_12px_rgba(251,207,232,0.2)] text-center w-full ${dotGothic.className}`}>りょーき</h1>
             </div>
             <div className={`flex flex-wrap gap-2 justify-center w-full ${dotGothic.className}`}>
-              <span className="bg-zinc-800/80 border border-zinc-700 px-3 py-1 rounded-full text-xs font-semibold">16 y/o</span>
+              <span className="bg-zinc-800/80 border border-zinc-700 px-3 py-1 rounded-full text-xs font-semibold">{myAge} y/o</span>
               <span className="bg-zinc-800/80 border border-zinc-700 px-3 py-1 rounded-full text-xs font-semibold">Japan</span>
               <span className="bg-zinc-800/80 border border-zinc-700 px-3 py-1 rounded-full text-xs font-semibold">Gamer</span>
               <span className="bg-zinc-800/80 border border-zinc-700 px-3 py-1 rounded-full text-xs font-semibold">Men</span>
@@ -344,7 +361,7 @@ const FAVORITE_GAMES = [
               className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/50 hover:border-purple-500/20 p-4 sm:p-6 rounded-2xl shadow-xl space-y-4 sm:space-y-6 w-full cursor-default hover:shadow-[0_0_25px_rgba(168,85,247,0.1)]"
             >
               <div className={dotGothic.className}>
-                <p className="text-zinc-400 text-xs">Age (年齢): <span className="text-white text-sm font-semibold">16</span></p>
+                <p className="text-zinc-400 text-xs">Age (年齢): <span className="text-white text-sm font-semibold">{myAge}</span></p>
                 <p className="text-zinc-400 text-xs mt-1">From (出身): <span className="text-white text-sm font-semibold">Japan</span></p>
               </div>
               
