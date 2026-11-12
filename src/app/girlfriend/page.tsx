@@ -26,19 +26,62 @@ export default function Girlfriend() {
   const [isLeaving, setIsLeaving] = useState(false);
   const [hearts, setHearts] = useState<{ id: number; left: number; delay: number; duration: number; size: number; opacity: number }[]>([]);
   const [daysTogether, setDaysTogether] = useState<number>(1);
+  const [anniversaryText, setAnniversaryText] = useState<string>('');
+  const [isSpecialDay, setIsSpecialDay] = useState<boolean>(false);
   const [aoiAge, setAoiAge] = useState<number>(14);
 
   useEffect(() => {
     setAoiAge(getAoiAge());
 
     // 記念日: 2026年10月15日
-    const startDate = new Date(2026, 9, 15); // 月は0始まり（9 = 10月）
+    const startYear = 2026;
+    const startMonth = 9; // 10月 (0-indexed)
+    const startDay = 15;
+    const startDate = new Date(startYear, startMonth, startDay);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     startDate.setHours(0, 0, 0, 0);
+
     const diffTime = today.getTime() - startDate.getTime();
     const diffDays = Math.max(1, Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1);
     setDaysTogether(diffDays);
+
+    // 月数・年数の計算
+    const monthsDiff = (today.getFullYear() - startYear) * 12 + (today.getMonth() - startMonth);
+    const isDay15 = today.getDate() === startDay;
+
+    let specialLabel = '';
+    let isSpecial = false;
+
+    if (diffDays === 100) {
+      specialLabel = '🎉 祝・100日記念日！ 💕';
+      isSpecial = true;
+    } else if (diffDays === 200) {
+      specialLabel = '🎉 祝・200日記念日！ 💕';
+      isSpecial = true;
+    } else if (diffDays === 300) {
+      specialLabel = '🎉 祝・300日記念日！ 💕';
+      isSpecial = true;
+    } else if (isDay15 && monthsDiff > 0) {
+      isSpecial = true;
+      if (monthsDiff % 12 === 0) {
+        specialLabel = `🎉 祝・${monthsDiff / 12}年記念日！ 💕`;
+      } else if (monthsDiff === 6) {
+        specialLabel = '🎉 祝・半年記念日！ 💕';
+      } else {
+        specialLabel = `🎉 祝・${monthsDiff}か月記念日！ 💕`;
+      }
+    } else if (monthsDiff > 0) {
+      // 当日以外の平常時も直近の節目（例: 1か月、3か月など）を表示
+      if (monthsDiff >= 12 && monthsDiff % 12 === 0) {
+        specialLabel = `♥ ${Math.floor(monthsDiff / 12)}年記念 ♥`;
+      } else {
+        specialLabel = `♥ ${monthsDiff}か月記念 ♥`;
+      }
+    }
+
+    setAnniversaryText(specialLabel);
+    setIsSpecialDay(isSpecial);
 
     setHearts(
       Array.from({ length: 20 }, (_, i) => ({
@@ -166,7 +209,16 @@ export default function Girlfriend() {
           </div>
 
           {/* 💕 付き合って何日目カウンター */}
-          <div className="flex justify-center">
+          <div className="flex flex-col items-center gap-2">
+            {anniversaryText && (
+              <div className={`px-4 py-1 rounded-full text-xs font-bold tracking-wider transition-all duration-300 ${
+                isSpecialDay
+                  ? 'bg-gradient-to-r from-pink-500 via-rose-500 to-purple-500 text-white shadow-[0_0_15px_rgba(244,63,94,0.5)] animate-bounce'
+                  : 'bg-pink-950/40 border border-pink-500/30 text-pink-300 shadow-[0_0_10px_rgba(244,114,182,0.15)]'
+              } ${dotGothic.className}`}>
+                {anniversaryText}
+              </div>
+            )}
             <div className={`flex flex-col items-center justify-center py-2.5 px-6 rounded-2xl bg-gradient-to-r from-pink-500/10 via-rose-500/15 to-pink-500/10 border border-pink-400/30 shadow-[0_0_15px_rgba(244,114,182,0.15)] ${dotGothic.className}`}>
               <div className="flex items-center gap-1.5 text-[10px] text-pink-300/80 tracking-widest font-mono">
                 <span>SINCE</span>
